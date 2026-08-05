@@ -1,40 +1,50 @@
-import DashboardLayout from "./components/layout/DashboardLayout";
 import { useEffect, useState } from "react";
 import api from "./services/api";
 
+import DashboardLayout from "./components/layout/DashboardLayout";
+import SearchBar from "./components/dashboard/SearchBar";
+import StockCard from "./components/dashboard/StockCard";
+
 function App() {
   const [stock, setStock] = useState(null);
+  const [symbol, setSymbol] = useState("AAPL");
+  const [loading, setLoading] = useState(false);
+
+  const fetchStock = async () => {
+    try {
+      setLoading(true);
+
+      const response = await api.get(`/stocks/${symbol}`);
+
+      setStock(response.data);
+    } catch (error) {
+      console.error(error);
+      alert("Stock not found!");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    api
-      .get("/stocks/AAPL")
-      .then((response) => {
-        setStock(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    fetchStock();
   }, []);
 
   return (
     <DashboardLayout>
-      {!stock ? (
-        <h1>Loading...</h1>
-      ) : (
-        <div className="bg-slate-900 p-8 rounded-xl w-96">
-          <h1 className="text-4xl font-bold text-blue-500">
-            {stock.company}
-          </h1>
+      <SearchBar
+        symbol={symbol}
+        setSymbol={setSymbol}
+        onSearch={fetchStock}
+      />
 
-          <p className="mt-4 text-xl">
-            Price : ${stock.price}
+      {loading ? (
+        <div className="flex justify-center items-center h-64">
+          <p className="text-xl text-blue-500 animate-pulse">
+            Loading stock data...
           </p>
-
-          <p>High : {stock.high}</p>
-          <p>Low : {stock.low}</p>
-          <p>Open : {stock.open}</p>
-          <p>Volume : {stock.volume}</p>
         </div>
+      ) : (
+        <StockCard stock={stock} />
       )}
     </DashboardLayout>
   );
