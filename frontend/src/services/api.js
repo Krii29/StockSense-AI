@@ -31,3 +31,16 @@ export async function fetchStockPrediction(symbol, market = 'NSE', days = 5) {
   });
   return response.data;
 }
+export async function sendChatMessage(
+  message,
+  symbol = 'RELIANCE',
+  market = 'NSE'
+) {
+  const response = await axios.post(`${API_BASE_URL}/chat`, {
+    message,
+    symbol,
+    market,
+  });
+
+  return response.data;
+}

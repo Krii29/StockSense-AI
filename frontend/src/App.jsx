@@ -1,3 +1,4 @@
+import StockSenseChatbot from './components/dashboard/StockSenseChatbot';
 import StockChart from './components/dashboard/StockChart';
 import NewsSentiment from './components/dashboard/NewsSentiment';import { useEffect, useState } from 'react';
 import { fetchStockData } from './services/api';
@@ -280,7 +281,12 @@ export default function App() {
               )}
             </>
           )}
-        </main>
+                </main>
+
+        <StockSenseChatbot
+          symbol={currentSymbol}
+          market={market}
+        />
       </div>
     </div>
   );
